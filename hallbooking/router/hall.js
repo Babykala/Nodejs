@@ -7,9 +7,9 @@ const getModule=require('../module/hall');
 
 router.post('/create',getModule.createBook);
 
-router.put('/update/:Id',getModule.updateBook);
+//router.put('/update/:Id',getModule.updateBook);
 
-router.delete('/remove/:Id',getModule.deleteBook);
+//router.delete('/remove/:Id',getModule.deleteBook);
 
 router.post('/roomCreate',getModule.createRoom);
 
@@ -17,6 +17,6 @@ router.post('/BookedData',getModule.createBookedData);
 
 router.get('/listOfBookedRooms',getModule.createBookedRoomList);
 
-//router.post('/customersBookingList',getModule.createBookedCustomer);
+router.post('/customersBookingList',getModule.createBookedCustomer);
 
 module.exports = router;
