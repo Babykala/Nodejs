@@ -12,7 +12,7 @@ module.exports.getBook=async (req,res,next)=>{
     }
 }
 
-//create
+//create booked data
 module.exports.createBook=async (req,res,next)=>{
     try{
         var mongoRes=await mongo.selectedDb.collection('hallBook').insert(req.body);
@@ -42,25 +42,59 @@ module.exports.deleteBook=async (req,res,next)=>{
     }
 }
 
-// //create room
-// module.exports.createRoom=async (req,res,next)=>{
-//     try{
-//         var mongoRes=await mongo.selectedDb.collection('createRoom').insert(req.body);
-//         res.send(mongoRes);
-//     }catch(err){
-//         console.log(err)
-//     }
-// }
+//create room
+module.exports.createRoom=async (req,res,next)=>{
+    try{
+        var mongoRes=await mongo.selectedDb.collection('createRoom').insert(req.body);
+        res.send(mongoRes);
+    }catch(err){
+        console.log(err)
+    }
+}
 
-// //create the list of all booking rooms
-// module.exports.createBookedRoom=async (req,res,next)=>{
-//     try{
-//         var mongoRes=await mongo.selectedDb.collection('bookList').insert(req.body);
-//         res.send(mongoRes);
-//     }catch(err){
-//         console.log(err)
-//     }
-// }
+//create booked data
+module.exports.createBookedData=async (req,res,next)=>{
+    try{
+        var mongoRes=await mongo.selectedDb.collection('BookedData').insert(req.body);
+        res.send(mongoRes);
+    }catch(err){
+        console.log(err)
+    }
+}
+
+//create the list of all booking rooms
+module.exports.createBookedRoomList=async (req,res,next)=>{
+    try{
+        var mongoRes=await mongo.selectedDb.collection('BookedData').aggregate([
+            {
+                $lookup:{
+                    from:'hallBook',
+                    localField:'roomId',
+                    foreignField:'roomId',
+                    as:'BookedRoomList'
+                },
+                
+            },
+            {
+                $unwind: '$BookedRoomList'
+              },
+              {
+                $project:{
+                    _id:0,
+                    roomName:'$BookedRoomList.roomName',
+                    bookedStatus:1,
+                    customerName:"$BookedRoomList.customerName",
+                    date:"$BookedRoomList.date",
+                    startTime:"$BookedRoomList.startTime",
+                    endTIme:"$BookedRoomList.endTime"
+                }  }
+              
+        ]);
+        res.send(mongoRes);
+    }catch(err){
+        console.log(err)
+    }
+}
 
 // //create the list of customers booked room
 // module.exports.createBookedCustomer=async (req,res,next)=>{
