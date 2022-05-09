@@ -89,19 +89,42 @@ module.exports.createBookedRoomList=async (req,res,next)=>{
                     endTIme:"$BookedRoomList.endTime"
                 }  }
               
-        ]);
+        ]).toArray();
         res.send(mongoRes);
     }catch(err){
         console.log(err)
     }
 }
 
-// //create the list of customers booked room
-// module.exports.createBookedCustomer=async (req,res,next)=>{
-//     try{
-//         var mongoRes=await mongo.selectedDb.collection('customerBookList').insert(req.body);
-//         res.send(mongoRes);
-//     }catch(err){
-//         console.log(err)
-//     }
-// }
+//create the list of customers booked room
+module.exports.createBookedCustomer=async (req,res,next)=>{
+    try{
+        var mongoRes=await mongo.selectedDb.collection('BookedData').aggregate([
+            {
+                $lookup:{
+                    from:'hallBook',
+                    localField:'roomId',
+                    foreignField:'roomId',
+                    as:'BookedRoomList'
+                },
+                
+            },
+            {
+                $unwind: '$BookedRoomList'
+              },
+              {
+                $project:{
+                    _id:0,
+                    roomName:'$BookedRoomList.roomName',
+                    customerName:"$BookedRoomList.customerName",
+                    date:"$BookedRoomList.date",
+                    startTime:"$BookedRoomList.startTime",
+                    endTIme:"$BookedRoomList.endTime"
+                }  }
+              
+        ]).toArray();
+        res.send(mongoRes);
+    }catch(err){
+        console.log(err)
+    }
+}
